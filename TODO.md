@@ -1,0 +1,3 @@
+- add websocket implementation
+- add candle recorder
+- range algo on stocks, see scanner

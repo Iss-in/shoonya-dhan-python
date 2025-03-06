@@ -1,0 +1,37 @@
+dhan:
+  access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzQzMzU2NzkxLCJ0b2tlbkNvbnN1bWVyVHlwZSI6IlNFTEYiLCJ3ZWJob29rVXJsIjoiIiwiZGhhbkNsaWVudElkIjoiMTEwMzIwOTU4MSJ9.hsAXMZJAr6rp2Tifv5d-FGeVz5L2sp-a1k8GL4bYkSv2gXWsWT8Yee_bceSD34h49pJ1oITVL755UMkdj6lgwQ
+  client_id: 1103209581
+
+
+shoonya:
+  uid    : "FA125898"
+  user    : "FA125898"
+  pwd     : "G5a2xjgvR8#C"
+  factor2 : "308403"
+  vc      : "FA125898_U"
+  api_key : "75e5036ea085faaf9eea2d45460fe96a"
+  imei    : "abc1234"
+  source : 'API'
+  totp_key : 'H32LR7H4W3O7A53XN53BSV554JRC5RIA'
+  nfo_file : 'https://api.shoonya.com/NFO_symbols.txt.zip'
+  nse_file : 'https://api.shoonya.com/NSE_symbols.txt.zip'
+  bfo_file : 'https://api.shoonya.com/BFO_symbols.txt.zip'
+  bse_file : 'https://api.shoonya.com/BSE_symbols.txt.zip'
+
+logging:
+  folder: logs
+  level: INFO
+
+intraday:
+  # indexes: ['NIFTY', 'BANKNIFTY', 'FINNIFTY']
+  maxTradeCount : 7
+  indexes:
+  - name: 'NIFTY'
+    exchange: NSE
+    token: 26000
+    minLotSize: 75
+    futSl: 20
+    maxFutSl : 25
+    targets: [20, 20, 20]
+    triggerDiff: 0.2
+    buyQty: 150

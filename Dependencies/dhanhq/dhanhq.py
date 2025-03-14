@@ -185,7 +185,7 @@ class dhanhq:
                 'data': ''
             }
 
-    def modify_order(self, order_id, order_type, quantity, price, trigger_price=0, leg_name="", disclosed_quantity=0, validity='DAY'):
+    def modify_order(self, order_id, order_type, quantity, price, trigger_price="", leg_name="", disclosed_quantity=0, validity='DAY'):
         """
         Modify a pending order in the orderbook.
 

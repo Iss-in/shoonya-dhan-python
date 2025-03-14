@@ -5,7 +5,7 @@ from Dependencies.Dhan_Tradehull.Dhan_Tradehull import Tradehull
 from utils.shoonyaApiHelper import ShoonyaApiPy
 import pyotp
 import logging
-
+from utils.misc import misc
 from utils.loggerHelper import setup_logger
 
 with open('conf/config.yaml', 'r') as file:
@@ -29,6 +29,11 @@ try:
     totp = pyotp.TOTP(cred['totp_key']).now()
     ret = shoonya_api.login(userid = cred['user'], password = cred['pwd'], twoFA=totp,
                     vendor_code=cred['vc'], api_secret=cred['api_key'], imei=cred['imei'])
+
+    nifty_monthly_expiry = misc.get_nse_monthly_expiry("NIFTY", 0)
+    nifty_fut_symbol = "NIFTY" + datetime.strftime(nifty_monthly_expiry, "%d%b%y").upper() + "F"
+    nifty_fut_token = misc.getToken(nifty_fut_symbol)
+
 except Exception as err :
     print(f"encountered error on logging in {err}")
     exit(1)

@@ -6,7 +6,7 @@ import time
 
 
 ''' 
-subscribe to dhan order websocket.py 
+subscribe to dhan order websocketService.py 
 '''
 
 def run_order_update():
@@ -24,4 +24,4 @@ def start_dhan_websocket():
     # Create and start a daemon thread so that it won't block shutdown.
     thread = threading.Thread(target=run_order_update, daemon=True)
     thread.start()
-    logger.info(f"dhan websocket.py started")
+    logger.info(f"dhan websocketService.py started")

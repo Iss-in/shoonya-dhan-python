@@ -1,6 +1,4 @@
-dhanhq
 pyyaml
-dhan-tradehull
 scipy
 fastapi
 uvicorn
@@ -14,4 +12,10 @@ schedule
 websockets
 asyncio
 websocket_server
+nsepythonserver
+sqlalchemy
+psycopg2
+setuptools
+pandas
+redis
 Dependencies/NorenRestApi-0.0.30-py2.py3-none-any.whl

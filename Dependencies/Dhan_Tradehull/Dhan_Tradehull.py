@@ -50,7 +50,7 @@ class Tradehull:
 		console_handler.setLevel(log_level)
 
 		# Create a formatter and set it for both handlers
-		formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(threadName)-10s:%(message)s')
+		formatter = logging.Formatter('%(filename)s:%(levelname)s:%(asctime)s:%(threadName)-10s:%(message)s')
 		file_handler.setFormatter(formatter)
 		console_handler.setFormatter(formatter)
 
@@ -130,7 +130,7 @@ class Tradehull:
 	def correct_step_df_creation(self):
 
 		self.correct_list = {} 
-		names_list = instrument_df['SEM_CUSTOM_SYMBOL'].str.split(' ').str[0].unique().tolist()
+		names_list = self.instrument_df['SEM_CUSTOM_SYMBOL'].str.split(' ').str[0].unique().tolist()
 		names_list = [name for name in names_list if isinstance(name, str) and '-' not in name and '%' not in name]
 		instrument_df = self.instrument_df.copy()
 
@@ -150,7 +150,8 @@ class Tradehull:
 				expiry_dates = filtered_df['SEM_EXPIRY_DATE'].unique()
 				if len(expiry_dates) == 0:
 					raise ValueError(f"No expiry date found for {name}")
-				
+					raise ValueError(f"No expiry date found for {name}")
+
 				expiry = expiry_dates[0]  # Assuming the first expiry is the desired one
 
 				# Filter for CE option type and calculate step values
@@ -179,6 +180,28 @@ class Tradehull:
 				self.logger.exception(f"Error processing {name}: {e}")
 				# print(f"Error processing {name}: {e}")		
 
+	def get_security_id(self, tradingsymbol:str, exchange:str):
+		tradingsymbol = tradingsymbol.upper()
+		instrument_df = self.instrument_df.copy()
+
+		instrument_exchange = {'NSE': "NSE", 'BSE': "BSE", 'NFO': 'NSE', 'BFO': 'BSE', 'MCX': 'MCX', 'CUR': 'NSE'}
+
+		security_check = instrument_df[((instrument_df['SEM_TRADING_SYMBOL'] == tradingsymbol) | (
+					instrument_df['SEM_CUSTOM_SYMBOL'] == tradingsymbol)) & (
+												   instrument_df['SEM_EXM_EXCH_ID'] == instrument_exchange[exchange])]
+		if security_check.empty:
+			raise Exception("Check the Tradingsymbol")
+		security_id = security_check.iloc[-1]['SEM_SMST_SECURITY_ID']
+		return security_id
+
+	def get_trading_symbol(self, token:str):
+		instrument_df = self.instrument_df.copy()
+
+		security_check = instrument_df[((instrument_df['SEM_SMST_SECURITY_ID'] == token) )]
+		if security_check.empty:
+			raise Exception("Check the token")
+		security_tsym = security_check.iloc[-1]['SEM_CUSTOM_SYMBOL']
+		return security_tsym
 
 	def order_placement(self,tradingsymbol:str, exchange:str,quantity:int, price:int, trigger_price:int, order_type:str, transaction_type:str, trade_type:str,disclosed_quantity=0,after_market_order=False,validity ='DAY', amo_time='OPEN',bo_profit_value=None, bo_stop_loss_Value=None)->str:
 		try:
@@ -1317,7 +1340,8 @@ class Tradehull:
 				exchange = "NSE"
 				expiry_exchange = exchange
 
-			expiry_list = self.get_expiry_list(Underlying=inst_asset, exchange = expiry_exchange)
+			# expiry_list = self.get_expiry_list(Underlying=inst_asset, exchange = expiry_exchange)
+			expiry_list = self.get_expiry_list(Underlying=inst_asset, exchange = "NSE")
 
 			if len(expiry_list)==0:
 				print(f"Unable to find the correct Expiry for {inst_asset}")

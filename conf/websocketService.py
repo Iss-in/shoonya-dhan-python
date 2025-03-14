@@ -1,24 +1,46 @@
-from websocket_server import WebsocketServer
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+
 import threading
 import json
 from queue import Queue
-from utils.loggerHelper import logger
+from conf.config import logger
+# from main import connection_manager
+from typing import List
+import asyncio
+
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def send_message(self, message: str):
+        for connection in self.active_connections:
+            await connection.send_text(message)
+
+connection_manager = ConnectionManager()
 
 queue = Queue()
 
 def send_message(message):
     try:
         queue.put(message)
-        process_queue()
+        asyncio.run(process_queue())
     except Exception as e:
         logger.error(f"Failed to queue message: {e}")
 
-def process_queue():
+async def process_queue():
     while not queue.empty():
         try:
             next_message = queue.get()
             if next_message:
-                send_message(next_message)
+                await connection_manager.send_message(next_message)
                 logger.debug(f"Sent message: {next_message}")
         except Exception as e:
             logger.error(f"Failed to send message: {e}")
@@ -43,11 +65,12 @@ def send_price_feed(token, epoch, price):
 def update_atm_options(ce_token, ce_tsym, pe_token, pe_tsym):
     res = {
         "type": "atm",
-        "ceToken": ce_token,
-        "peToken": pe_token,
+        "ceToken": int(ce_token),
+        "peToken": int(pe_token),
         "ceTsym": ce_tsym,
         "peTsym": pe_tsym
     }
+    print(res)
     send_message(json.dumps(res))
 
 def update_order_feed(orders):

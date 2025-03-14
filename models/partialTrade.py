@@ -1,3 +1,4 @@
+import json
 class PartialTrade:
     def __init__(self, name, status, qty, entryPrice, slPrice, maxSlPrice, targetPrice, orderType, prd, exch, tsym, diff, token):
         self.name = name
@@ -15,3 +16,7 @@ class PartialTrade:
         self.tsym = tsym
         self.diff = diff
         self.token = token
+
+    def to_json(self):
+        return json.dumps(self.__dict__, indent=4)
+
